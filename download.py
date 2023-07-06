@@ -15,74 +15,63 @@ from pathlib import Path
 
 base_directory = Path(__file__).parents[0]
 
+root_url = "https://plvr.land.moi.gov.tw/DownloadSeason"
+
 years = ["106", "107", "108", "109"]
 quarters = ["1", "2", "3", "4"]
-cities = ["臺北市", "新北市", "高雄市"]
-city_codes = ["A", "F", "E"]
+real_estate_cities = {
+    "A": "臺北市",
+    "F": "新北市",
+    "E": "高雄市",
+}
+pre_sale_cities = {
+    "H": "桃園市",
+    "B": "臺中市",
+}
 
-presale_cities = ["桃園市", "臺中市"]
-presale_city_codes = ["H", "B"]
+transaction_types = {
+    "A": {
+        "name": "real estate sales",
+        "cities": real_estate_cities,
+    },
+    "B": {
+        "name": "pre-sale house sales",
+        "cities": pre_sale_cities,
+    },
+}
 
 output_folder = Path(base_directory).joinpath("download_files")
 if not os.path.exists(output_folder):
     os.makedirs(output_folder)
 
-root_url = "https://plvr.land.moi.gov.tw/DownloadSeason"
+for transaction_type, transaction_type_info in transaction_types.items():
+    count = 0
+    print(f"=== {transaction_type_info['name']} ===\n")
 
-print("== real estate sales ==")
-count = 0
-for year in years:
-    for quarter in quarters:
-        for city, city_code in zip(cities, city_codes):
-            query_file_name = f"{city_code}_lvr_land_A.csv"  # A:real estate sales
-            download_url = (
-                f"{root_url}?season={year}S{quarter}&fileName={query_file_name}"
-            )
+    for city_code, city_name in transaction_type_info["cities"].items():
+        for year in years:
+            for quarter in quarters:
+                query_file_name = f"{city_code}_lvr_land_{transaction_type}.csv"
+                download_url = (
+                    f"{root_url}?season={year}S{quarter}&fileName={query_file_name}"
+                )
 
-            print(f"download：{year}年第{quarter}季 {city}...")
+                print(f"download：{year}year S{quarter} {city_name}...")
 
-            response = requests.get(download_url)
+                response = requests.get(download_url)
 
-            if response.headers["Content-Type"] != "application/octet-stream":
-                print(f"fail to download (or empty file)：{year}年第{quarter}季 {city}\n")
-                continue
+                if response.headers["Content-Type"] != "application/octet-stream":
+                    print(
+                        f"fail to download (or empty file)：{year}year S{quarter} {city_name}\n"
+                    )
+                    continue
 
-            output_file_name = f"{year}_{quarter}_{query_file_name}"
-            output_file = os.path.join(output_folder, output_file_name)
-            with open(output_file, "wb") as file:
-                file.write(response.content)
+                output_file_name = f"{year}_{quarter}_{query_file_name}"
+                output_file = os.path.join(output_folder, output_file_name)
+                with open(output_file, "wb") as file:
+                    file.write(response.content)
 
-            count += 1
-            print(f"done to download：{year}年第{quarter}季 {city}\n")
+                count += 1
+                print(f"done to download：{year}year S{quarter} {city_name}\n")
 
-print(f"there is {count} files for real estate sales\n")
-
-
-print("== pre-sale house sales ==")
-count = 0
-for year in years:
-    for quarter in quarters:
-        for city, city_code in zip(presale_cities, presale_city_codes):
-            query_file_name = f"{city_code}_lvr_land_B.csv"  # B:pre-sale house sales
-
-            download_url = (
-                f"{root_url}?season={year}S{quarter}&fileName={query_file_name}"
-            )
-
-            print(f"download：{year}年第{quarter}季 {city}...")
-
-            response = requests.get(download_url)
-
-            if response.headers["Content-Type"] != "application/octet-stream":
-                print(f"fail to download (or empty file)：{year}年第{quarter}季 {city}\n")
-                continue
-
-            output_file_name = f"{year}_{quarter}_{query_file_name}"
-            output_file = os.path.join(output_folder, output_file_name)
-            with open(output_file, "wb") as file:
-                file.write(response.content)
-            
-            count += 1
-            print(f"done to download：{year}年第{quarter}季 {city}\n")
-
-print(f"there is {count} files for pre-sale house sales\n")
+    print(f"there is {count} files for {transaction_type_info['name']}\n")
