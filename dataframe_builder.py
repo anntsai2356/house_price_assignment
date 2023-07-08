@@ -28,7 +28,7 @@ class DataFrameBuilder:
     def __init__(self) -> None:
         pass
 
-    def createDataFrame(self, download_files_folder: Path, file_name: str) -> DataFrame:
+    def createDataFrame(self, downloaded_files_folder: Path, file_name: str) -> DataFrame:
         # Extract the year, quarter, city, and data type from the filename
         match = re.search(
             r"(?P<year>\d+)_(?P<quarter>\d)_(?P<city_code>\w)_lvr_land_(?P<transaction_type>\w).csv",
@@ -40,15 +40,15 @@ class DataFrameBuilder:
         transaction_type = match.group("transaction_type")
 
         # Set the header as the second row in English
-        df = pd.read_csv(os.path.join(download_files_folder, file_name), header=1)
+        df = pd.read_csv(os.path.join(downloaded_files_folder, file_name), header=1)
         df["df_name"] = f"{year}_{quarter}_{city_code}_{transaction_type}"
 
         return df
 
-    def mergeAllDataFrames(self, download_files_folder: Path) -> DataFrame:
+    def mergeAllDataFrames(self, downloaded_files_folder: Path) -> DataFrame:
         # Get all files that match the filename pattern
         files = []
-        for file_name in os.listdir(download_files_folder):
+        for file_name in os.listdir(downloaded_files_folder):
             if "_lvr_land_" in file_name:
                 files.append(file_name)
 
@@ -58,7 +58,7 @@ class DataFrameBuilder:
         # Create DataFrames
         dfs = []
         for file_name in files:
-            df = self.createDataFrame(download_files_folder, file_name)
+            df = self.createDataFrame(downloaded_files_folder, file_name)
             dfs.append(df)
 
         # Merge all DataFrames
@@ -156,10 +156,10 @@ class DataFrameBuilder:
 if __name__ == "__main__":
     df_builder = DataFrameBuilder()
 
-    download_files_folder = Path(base_directory).joinpath("download_files")
+    downloaded_files_folder = Path(base_directory).joinpath("downloaded_files")
     data_folder = Path(base_directory).joinpath("data")
 
-    df_all = df_builder.mergeAllDataFrames(download_files_folder)
+    df_all = df_builder.mergeAllDataFrames(downloaded_files_folder)
 
     df_builder.filterAndExport(df_all, data_folder)
     df_builder.countAndExport(df_all, data_folder)

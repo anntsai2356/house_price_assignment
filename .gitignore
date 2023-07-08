@@ -2,5 +2,5 @@
 .vscode
 
 # data
-download_files/*
+downloaded_files/*
 data/*
