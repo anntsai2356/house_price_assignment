@@ -1,20 +1,3 @@
-"""
-# Question 3
-操作 data frame 物件,將所有物件合併成【df_all】。
-
-# Question 4
-以下列條件從【df_all】使用【Pandas】篩選/計算出結果,並分別輸出【csv 檔案】 :
-     - filter.csv
-        +【主要用途】為【住家用】
-        +【建物型態】為【住宅大樓】
-        +【總樓層數】需【大於等於十三層】
-     - count.csv
-        + 計算【總件數】
-        + 計算【總車位數】
-        + 計算【平均總價元】
-        + 計算【平均車位總價元】
-"""
-
 import pandas as pd
 import os
 import re
