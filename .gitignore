@@ -1,5 +1,6 @@
 .DS_STORE
 .vscode
+__pycache__
 
 # data
 downloaded_files/*
