@@ -1,4 +1,4 @@
-class Dimensions:
+class Conditions:
     years = ["106", "107", "108", "109"]
     quarters = ["1", "2", "3", "4"]
     real_estate_cities = {

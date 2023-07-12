@@ -53,13 +53,13 @@ class Downloader:
 
 
 if __name__ == "__main__":
-    from dimensions import Dimensions
+    from conditions import Conditions
 
-    years = Dimensions.years
-    quarters = Dimensions.quarters
-    real_estate_cities = Dimensions.real_estate_cities
-    pre_sale_cities = Dimensions.pre_sale_cities
-    transaction_types = Dimensions.transaction_types
+    years = Conditions.years
+    quarters = Conditions.quarters
+    real_estate_cities = Conditions.real_estate_cities
+    pre_sale_cities = Conditions.pre_sale_cities
+    transaction_types = Conditions.transaction_types
 
     downloader = Downloader()
     downloader.run(transaction_types, years, quarters)
